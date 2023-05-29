@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="nl" dir="ltr">
+<head>
+	<meta charset="utf-8">
+	<title>Annotate HTML webpage</title>
+	<link rel="stylesheet" href="texteditor.css">
+	<link rel="stylesheet" href="annotate.css">
+</head>
+<!--https://www.cssscript.com/demo/text-annotation-highlighting/-->
+<body>
+  <dialog id="passphraseDialog">
+    <p>Please enter the Passphrase:</p>
+    <form method="dialog">
+      <input type="password" id="passphraseInput" formmethod="dialog" placeholder="Or leave it empty">
+      <button id="confirmBtn" value="default">Submit</button>
+    </form>
+  </dialog>
+  <main class="annotatable" oncontextmenu="annotate(event);">
+    <h1>Here comes the default text.</h1>
+    <p>See the language section in the annotate.js file.</p>
+  </main>
+	<div id="texteditor" style="display: none;"></div>
+	<!--External JavaScript file-->
+	<script src="texteditor.js"></script>
+	<script type="text/javascript">loadEditor(document.getElementById("texteditor"), "texteditor.html");</script>
+	<script src="annotate.js"></script>
+  <div id="saveViewer"></div>
+</body>
+</html>
