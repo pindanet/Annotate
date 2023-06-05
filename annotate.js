@@ -9,7 +9,7 @@ if (lang != null) {
 }
 var mainEn = `
   <h1>Making notes on HTML webpages.</h1>
-  <p>Right-click in the text to create a text note at this location.</p>
+  <p>With the CTRL key pressed, click in the text to create a text note at this location.</p>
   <p>A text editor appears in the line above the click position.
   Write the note with or without formatting and click the save button to save it encrypted on the web server.
   In this demo, notes older than one day are deleted when saving a new note.</p>
@@ -34,7 +34,7 @@ var en = ({
 });
 var mainNl = ` 
   <h1>Notities maken op HTML webpagina&apos;s.</h1>
-  <p>Klik met de rechtermuisknop in de tekst om op deze plaats een tekstnotitie te maken.</p>
+  <p>Klik met ingedrukte CTRL-toets in de tekst om op deze plaats een tekstnotitie te maken.</p>
   <p>In de regel boven de klikpositie verschijnt een teksteditor.
   Schrijf de notitie met of zonder opmaak en klik op de bewaarknop om hem gecodeerd op te slaan op de webserver.
   In deze demo worden notities ouder dan één dag verwijderd bij het opslaan van een nieuwe notitie.</p>
@@ -166,46 +166,47 @@ function save(event) {
 }
 let activeEditorAtTextPosition = 0;
 function annotate(event) {
-console.log(activeEditorAtTextPosition);
-  event.preventDefault();
-  if (activeEditorAtTextPosition != 0) {
-    alert(translate[l10n]["Finish (Save) editing the previous note to create a new one!"]);
-    return;
+  if (event.ctrlKey) {
+    event.preventDefault();
+    if (activeEditorAtTextPosition != 0) {
+      alert(translate[l10n]["Finish (Save) editing the previous note to create a new one!"]);
+      return;
+    }
+    createSelectionFromPoint(event.clientX, event.clientY, event.clientX, event.clientY);
+    newNode = document.createElement("span");
+    newNode.className = "annotation";
+    range = window.getSelection().getRangeAt(0);
+    range.insertNode(newNode);
+  // get annotable element
+    let annotatableEl = event.target;
+    while (annotatableEl.className.indexOf("annotatable") == -1) {
+      annotatableEl = annotatableEl.parentElement;
+    }
+    activeEditorAtTextPosition = getCaretIndex(annotatableEl);
+    newNode.id = "annotation" + activeEditorAtTextPosition;
+  
+    let texteditorEl = document.getElementById("texteditor").cloneNode(true);
+    editHistory[1] = [];
+    let contentEditableEl = texteditorEl.querySelectorAll('div[contentEditable]')[0];
+    observer.observe(contentEditableEl, config);
+    editHistory[1].push(['editHTML', contentEditableEl.innerHTML, 0]);
+  
+    document.body.appendChild(texteditorEl); 
+    texteditorEl.id = "annotateText" + activeEditorAtTextPosition;
+    texteditorEl.classList.add("annotationText");
+    texteditorEl.style.display = "";
+    texteditorEl.style.position = "absolute";
+    texteditorEl.style.top = parseInt(newNode.getBoundingClientRect().top - texteditorEl.getBoundingClientRect().height) + "px";
+    contentEditableEl.setAttribute("placeholder", translate[l10n]["Don't forget to save."]);
+    contentEditableEl.focus();
+    contentEditableEl.innerHTML = "";
+  // Detect-when-the-contenteditable editor-element-height-changes
+    new ResizeObserver(changes => {
+        if (changes[0].contentRect.height > 0) {
+          refreshAnnotations();
+        }
+    }).observe(contentEditableEl);
   }
-  createSelectionFromPoint(event.clientX, event.clientY, event.clientX, event.clientY);
-  newNode = document.createElement("span");
-  newNode.className = "annotation";
-  range = window.getSelection().getRangeAt(0);
-  range.insertNode(newNode);
-// get annotable element
-  let annotatableEl = event.target;
-  while (annotatableEl.className.indexOf("annotatable") == -1) {
-    annotatableEl = annotatableEl.parentElement;
-  }
-  activeEditorAtTextPosition = getCaretIndex(annotatableEl);
-  newNode.id = "annotation" + activeEditorAtTextPosition;
-
-  let texteditorEl = document.getElementById("texteditor").cloneNode(true);
-  editHistory[1] = [];
-  let contentEditableEl = texteditorEl.querySelectorAll('div[contentEditable]')[0];
-  observer.observe(contentEditableEl, config);
-  editHistory[1].push(['editHTML', contentEditableEl.innerHTML, 0]);
-
-  document.body.appendChild(texteditorEl); 
-  texteditorEl.id = "annotateText" + activeEditorAtTextPosition;
-  texteditorEl.classList.add("annotationText");
-  texteditorEl.style.display = "";
-  texteditorEl.style.position = "absolute";
-  texteditorEl.style.top = parseInt(newNode.getBoundingClientRect().top - texteditorEl.getBoundingClientRect().height) + "px";
-  contentEditableEl.setAttribute("placeholder", translate[l10n]["Don't forget to save."]);
-  contentEditableEl.focus();
-  contentEditableEl.innerHTML = "";
-// Detect-when-the-contenteditable editor-element-height-changes
-  new ResizeObserver(changes => {
-      if (changes[0].contentRect.height > 0) {
-        refreshAnnotations();
-      }
-  }).observe(contentEditableEl);
 }
 function getPageName(url) {
   var index = url.lastIndexOf("/") + 1;
