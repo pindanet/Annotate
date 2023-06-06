@@ -6,20 +6,7 @@ let lang = params.get("lang");
 if (lang != null) {
   l10n = lang;
 }
-var mainEn = `
-  <h1>Making notes on HTML webpages.</h1>
-  <p>With the CTRL key pressed, click in the text to create a text note at this location.</p>
-  <p>A text editor appears in the line above the click position.
-  Write the note with or without formatting and click the save button to save it encrypted on the web server.
-  In this demo, notes older than one day are deleted when saving a new note.</p>
-  <p>When encrypting, a passphrase (password) can be used to save the notes from this page even better encrypted.</p>
-  <p>Each note can be modified and deleted.</p>
-  <p>The notes are language bound. Thus, notes may not appear (or different notes) if different language settings are used on another computer or browser.
-  Check out the Dutch version <a href="index.html?lang=nl" target="_blank">here</a>.</p>
-  <p>This application uses the open source text editor described <a href="https://pindanet.github.io/Texteditor/" target="_blank">here</a>.</p>
-`.trim();
 var en = ({
-  "mainEn": mainEn,
   "Please enter the Passphrase:": "Please enter the Passphrase:",
   "Or leave it empty": "Or leave it empty",
   "Submit": "Submit",
@@ -31,20 +18,7 @@ var en = ({
   "Finish (Save) editing the previous note to edit another!": "Finish (Save) editing the previous note to edit another!",
   "Don't forget to save.": "Don't forget to save."
 });
-var mainNl = ` 
-  <h1>Notities maken op HTML webpagina&apos;s.</h1>
-  <p>Klik met ingedrukte CTRL-toets in de tekst om op deze plaats een tekstnotitie te maken.</p>
-  <p>In de regel boven de klikpositie verschijnt een teksteditor.
-  Schrijf de notitie met of zonder opmaak en klik op de bewaarknop om hem gecodeerd op te slaan op de webserver.
-  In deze demo worden notities ouder dan één dag verwijderd bij het opslaan van een nieuwe notitie.</p>
-  <p>Bij het coderen kan een passphrase (wachtwoord) worden gebruikt om de notities van deze pagina nog beter gecodeerd op te slaan.</p>
-  <p>Elke notitie kan worden gewijzigd en verwijderd.</p>
-  <p>Zo kunnen notities niet (of andere notities) verschijnen als op een andere computer of browser andere taalinstellingen worden gebruikt.
-  Bekijk <a href="index.html?lang=en" target="_blank">hier</a> de Engelse versie.</p>
-  <p>Deze toepassing gebruikt de <a href="https://pindanet.github.io/Texteditor/" target="_blank">hier</a> beschreven open source teksteditor.</p>
-`.trim();
 var nl = ({
-  "mainEn": mainNl,
   "Please enter the Passphrase:": "Voer de wachtwoordzin in:",
   "Or leave it empty": "Of laat het leeg",
   "Submit": "Versturen",
@@ -65,8 +39,6 @@ if (passphraseDialogEl != null) {
   passphraseInputEl.placeholder = translate[l10n][passphraseInputEl.placeholder];
   passphraseConfirmEl = document.getElementById("confirmBtn");
   passphraseConfirmEl.innerHTML = translate[l10n][passphraseConfirmEl.innerHTML];
-  mainEl = document.getElementsByTagName("main")[0];
-  mainEl.innerHTML = translate[l10n]["mainEn"];
 }
 // End of translations
 function createSelectionFromPoint(startX, startY, endX, endY) {
