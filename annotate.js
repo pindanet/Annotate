@@ -1,5 +1,4 @@
 // ToDo
-// Refuse new notation when existing another
 
 // Translations
 let params = new URLSearchParams(document.location.search);
@@ -159,7 +158,7 @@ function save(event) {
   xhttp.onload = function() {
     refreshAnnotations();
   }
-  xhttp.open("POST", "save.php");
+  xhttp.open("POST", saveScript);
   xhttp.send(formData);
 
   activeEditorAtTextPosition = 0;
@@ -376,28 +375,30 @@ function load(files, index) {
   xhttp.open("POST", "load.php");
   xhttp.send(formData);
 }
-// get passphrase
-// https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog
-passphraseDialog = document.getElementById('passphraseDialog'); 
-passphraseDialog.showModal();
-passphraseDialog.addEventListener('close', (e) => {
-  document.body.querySelectorAll('.passphrase')[0].value = passphraseDialog.returnValue;
-  document.body.querySelectorAll('.passphrase')[0].style.display = "none";
-  let formData = new FormData();
-  formData.append('page', getPageName(window.location.pathname) + l10n);
-  // load annotations from server
-  const xhttp = new XMLHttpRequest();
-  xhttp.onload = function() {
-    let files = JSON.parse(this.responseText);
-      if (files.length > 0) {
-        load(files, 0);
-      }
-  }
-  xhttp.open("POST", "dir.php");
-  xhttp.send(formData);
-});
-passphraseDialog.querySelector('#confirmBtn').addEventListener('click', (event) => {
-  event.preventDefault(); // We don't want to submit this fake form
-  passphraseDialog.close(passphraseDialog.querySelector('#passphraseInput').value); // Have to send the input value here.
-});
+function askPassphrase() {
+  // get passphrase
+  // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog
+  passphraseDialog = document.getElementById('passphraseDialog'); 
+  passphraseDialog.showModal();
+  passphraseDialog.addEventListener('close', (e) => {
+    document.body.querySelectorAll('.passphrase')[0].value = passphraseDialog.returnValue;
+    document.body.querySelectorAll('.passphrase')[0].style.display = "none";
+    let formData = new FormData();
+    formData.append('page', getPageName(window.location.pathname) + l10n);
+    // load annotations from server
+    const xhttp = new XMLHttpRequest();
+    xhttp.onload = function() {
+      let files = JSON.parse(this.responseText);
+        if (files.length > 0) {
+          load(files, 0);
+        }
+    }
+    xhttp.open("POST", "dir.php");
+    xhttp.send(formData);
+  });
+  passphraseDialog.querySelector('#confirmBtn').addEventListener('click', (event) => {
+    event.preventDefault(); // We don't want to submit this fake form
+    passphraseDialog.close(passphraseDialog.querySelector('#passphraseInput').value); // Have to send the input value here.
+  });
+}
 window.onresize = refreshAnnotations;
